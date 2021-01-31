@@ -29,6 +29,7 @@ class Mesh {
     VertexArray *vao{nullptr};
     unsigned int indexBufferSize{0};
     IndexBuffer *indexBuffer{nullptr};
+    std::vector<Mesh> relatedMeshes;
 
 
     Mesh() = default;
@@ -117,6 +118,7 @@ public:
             relatedMeshes.back().compile();
         }
         model = glm::mat4(1.f);
+        setTextures(material.textures);
     }
 
     explicit Mesh(std::vector<ObjLoader::loadedOBJ> loadedOBJs) {
@@ -132,6 +134,7 @@ public:
             relatedMeshes.back().compile();
         }
         model = glm::mat4(1.f);
+        setTextures(material.textures);
     }
 
     explicit Mesh(const ObjLoader::loadedOBJ &loadedObjData) {
@@ -141,6 +144,7 @@ public:
         vao = new VertexArray;
         model = glm::mat4(1.f);
         material = loadedOBJ.material;
+        setTextures(material.textures);
     }
 
     ObjLoader::loadedOBJ loadedOBJ;
@@ -223,7 +227,6 @@ public:
         indexBuffer = new IndexBuffer(indices);
     }
 
-    std::vector<Mesh> relatedMeshes;
 private:
     Mesh *addNewBuffer(Buffer _buffer, bool bReplace = false) {
         bool wasReplaced = false;

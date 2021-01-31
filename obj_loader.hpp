@@ -13,6 +13,7 @@ public:
         glm::vec3 diffuse{};
         glm::vec3 specular{};
         float shininess{};
+        std::vector<Texture *> textures;
 
     };
     struct loadedOBJ {
@@ -21,6 +22,7 @@ public:
         std::vector<float> texCoords;
         std::vector<float> normals;
         MaterialInfo material;
+
     };
 
 
@@ -77,7 +79,7 @@ private:
             LOG_S(INFO) << "material: " << materials[mesh->mMaterialIndex].name;
 
             LOG_S(INFO) << "---------------";
-            loadedMeshes.push_back({indices, vertices, texCoords, normals,materials[mesh->mMaterialIndex]});
+            loadedMeshes.push_back({indices, vertices, texCoords, normals, materials[mesh->mMaterialIndex]});
         }
 
         return loadedMeshes;
@@ -112,7 +114,26 @@ private:
         mat.name = material->GetName().C_Str();
         int shadingModel;
         material->Get(AI_MATKEY_SHADING_MODEL, shadingModel);
+        unsigned int diffuseTexturesCount, specularTexturesCount;
+        diffuseTexturesCount = material->GetTextureCount(aiTextureType_DIFFUSE);
+        specularTexturesCount = material->GetTextureCount(aiTextureType_SPECULAR);
+        LOG_S(INFO) << "    Diffuse: " << diffuseTexturesCount;
+        LOG_S(INFO) << "    Specular: " << specularTexturesCount;
 
+        for (unsigned int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++) {
+            aiString str;
+            material->GetTexture(aiTextureType_DIFFUSE, i, &str);
+            std::string texName="textures/";
+            texName+=str.C_Str();
+            mat.textures.push_back(new Texture(texName));
+        }
+        for (unsigned int i = 0; i < material->GetTextureCount(aiTextureType_SPECULAR); i++) {
+            aiString str;
+            material->GetTexture(aiTextureType_SPECULAR, i, &str);
+            std::string texName="textures/";
+            texName+=str.C_Str();
+            mat.textures.push_back(new Texture(texName));
+        }
         if (shadingModel != aiShadingMode_Phong && shadingModel != aiShadingMode_Gouraud) {
             LOG_S(WARNING)
             << "This mesh's shading model is not implemented in this loader, setting to default material";
