@@ -1,5 +1,13 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
+    <Objective-C>
+      <option name="KEEP_STRUCTURES_IN_ONE_LINE" value="true" />
+      <option name="KEEP_CASE_EXPRESSIONS_IN_ONE_LINE" value="true" />
+      <option name="KEEP_NESTED_NAMESPACES_IN_ONE_LINE" value="true" />
+      <option name="FUNCTION_PARAMETERS_NEW_LINE_BEFORE_RPAR" value="true" />
+      <option name="INSERT_VIRTUAL_WITH_OVERRIDE" value="true" />
+      <option name="ADD_BRIEF_TAG" value="true" />
+    </Objective-C>
     <Objective-C-extensions>
       <extensions>
         <pair source="cpp" header="hpp" fileNamingConvention="SNAKE_CASE" />
@@ -7,5 +15,16 @@
         <pair source="cu" header="cuh" fileNamingConvention="NONE" />
       </extensions>
     </Objective-C-extensions>
+    <clangFormatSettings>
+      <option name="ENABLED" value="true" />
+    </clangFormatSettings>
+    <codeStyleSettings language="CMake">
+      <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
+    </codeStyleSettings>
+    <codeStyleSettings language="ObjectiveC">
+      <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
+      <option name="ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE" value="true" />
+      <option name="ARRAY_INITIALIZER_RBRACE_ON_NEXT_LINE" value="true" />
+    </codeStyleSettings>
   </code_scheme>
 </component>

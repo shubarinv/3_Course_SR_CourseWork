@@ -29,7 +29,6 @@ class Mesh {
     VertexArray *vao{nullptr};
     unsigned int indexBufferSize{0};
     IndexBuffer *indexBuffer{nullptr};
-    std::vector<Mesh> relatedMeshes;
 
 
     Mesh() = default;
@@ -78,8 +77,7 @@ public:
             for (int i = 0; i < textures.size(); ++i) {
                 textures[i]->bind(i);
             }
-        }
-        else{
+        } else {
             shader->setUniform1i("useTexture", 0);
             shader->setUniform3f("material.mat_diffuse", material.diffuse);
             shader->setUniform3f("material.mat_specular", material.specular);
@@ -150,16 +148,28 @@ public:
     ObjLoader::loadedOBJ loadedOBJ;
     ObjLoader::MaterialInfo material;
 
-    Mesh *compile() {
+    Mesh *addRelatedMeshes(const std::vector<Mesh>& _relatedMeshes) {
+        for (auto &mesh:_relatedMeshes) {
+            relatedMeshes.push_back(mesh);
+        }
+        return this;
+    }
+
+    Mesh *compile(bool compileRelatedMeshes=false) {
         if (coordinates.empty()) {
             LOG_S(ERROR) << "Coordinates were not set!";
             return this;
         }
         addNewBuffer(VertexBuffer(coordinates));// Setting VBO
-        if (textures.size() == 1) {
-            addTexture("textures/NoSpec.png");
-        }
+        //    if (textures.size() == 1) {
+        //        addTexture("textures/NoSpec.png");
+        //    }
         fillVAO();
+        if(compileRelatedMeshes){
+            for(auto &mesh:relatedMeshes){
+                mesh.compile();
+            }
+        }
         return this;
     }
 
@@ -227,6 +237,7 @@ public:
         indexBuffer = new IndexBuffer(indices);
     }
 
+    std::vector<Mesh> relatedMeshes;
 private:
     Mesh *addNewBuffer(Buffer _buffer, bool bReplace = false) {
         bool wasReplaced = false;
