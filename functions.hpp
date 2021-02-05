@@ -5,8 +5,16 @@
 #define CG_LABS_FUNCTIONS_HPP
 
 #if defined(__APPLE__)
+  #define LOGURU_WITH_STREAMS 1
+  #include "libs/loguru.cpp"
 #endif
-#define LOGURU_WITH_STREAMS 1
+
+#if defined(__WIN32__)
+  #include "libs/easylogging++.h"
+INITIALIZE_EASYLOGGINGPP
+	#define LOG_S LOG
+#endif
+
 #include <glad/glad.h>// should be before glfw3 include or compilation will fail
 #include <GLFW/glfw3.h>
 
@@ -14,14 +22,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "libs/loguru.cpp"
-
-void logInit([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
-  loguru::init(argc, argv);
-
-  // Put every log message in "everything.log":
-  loguru::add_file("main.log", loguru::Truncate, loguru::Verbosity_MAX);
-}
 #if defined(__APPLE__)
   #define ASSERT(X) \
 	if (!(X)) __builtin_trap()
@@ -92,7 +92,7 @@ bool glLogCall(const char *function = {}, const char *file = {}, int line = -1) 
 	return true;
   }
   while (GLenum error = glGetError()) {
-	LOG_S(ERROR) << "OpenGL error: " << glErrorToString(error) << " in file " << file << ":"<<line<<" in " << function;
+	LOG_S(ERROR) << "OpenGL error: " << glErrorToString(error) << " in file " << file << ":" << line << " in " << function;
 	//throw std::runtime_error("OpenGL error: " + glErrorToString(error));
   }
   return true;
@@ -138,4 +138,28 @@ void debugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsize
   // Print, log, whatever based on the enums and message
 }
 
+void logInitWin([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
+#if defined(__WIN32__)
+  el::Configurations defaultConf;
+  defaultConf.setToDefault();
+  // Values are always std::string
+  defaultConf.set(el::Level::Info,el::ConfigurationType::Format, "%datetime %level %msg");
+  // To set GLOBAL configurations you may use
+  defaultConf.setGlobally(
+	  el::ConfigurationType::Format, "%datetime %thread %fbase:%line  %level| %msg");
+  el::Loggers::reconfigureLogger("default", defaultConf);
+#endif
+}
+
+void logInit([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
+  if (isWindows()) {
+	logInitWin(argc, argv);
+	return;
+  }
+
+  loguru::init(argc, argv);
+
+  // Put every log message in "everything.log":
+  loguru::add_file("main.log", loguru::Truncate, loguru::Verbosity_MAX);
+}
 #endif// CG_LABS_FUNCTIONS_HPP

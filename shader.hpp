@@ -35,7 +35,6 @@ class Shader {
 	if(isMac()){
 	lastWriteToFile = std::filesystem::last_write_time(_filepath);
 	if (bEnableLiveReload) enableLiveReload();}
-	LOG_SCOPE_F(INFO, "Shader init");
 	filepath = _filepath;
 	source = parseShader();
 	rendererID = createShader();
@@ -92,7 +91,6 @@ class Shader {
 	if (isMac()) {
 	  if (isReloadRequired()) {
 		lastWriteToFile = std::filesystem::last_write_time(filepath);
-		LOG_SCOPE_F(INFO, "Shader reload");
 		source = parseShader();
 		rendererID = createShader(true);
 		LOG_S(INFO) << "Reloaded shader with id: " << rendererID;

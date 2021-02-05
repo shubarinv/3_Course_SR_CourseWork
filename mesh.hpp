@@ -103,7 +103,6 @@ public:
     }
 
     explicit Mesh(const std::string &filepath) {
-        LOG_SCOPE_F(INFO, "Gonna load OBJ file");
         ObjLoader objLoader;
         auto meshes = objLoader.loadObj(filepath);
         loadedOBJ = meshes.front();
