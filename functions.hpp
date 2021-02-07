@@ -3,7 +3,6 @@
 //
 #ifndef CG_LABS_FUNCTIONS_HPP
 #define CG_LABS_FUNCTIONS_HPP
-
 #if defined(__APPLE__)
   #define LOGURU_WITH_STREAMS 1
   #include "libs/loguru.cpp"
@@ -38,7 +37,9 @@ INITIALIZE_EASYLOGGINGPP
   glClearErrors(); \
   x;               \
   ASSERT(glLogCall(#x, __FILE__, __LINE__))
-
+#if defined(__WIN32__)
+  #define  uint unsigned int
+#endif
 /**
  * @brief checks if program being built on windows
  * @return true if on Windows, false otherwise
@@ -156,10 +157,11 @@ void logInit([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
 	logInitWin(argc, argv);
 	return;
   }
-
+#if not defined(__WIN32__)
   loguru::init(argc, argv);
 
   // Put every log message in "everything.log":
   loguru::add_file("main.log", loguru::Truncate, loguru::Verbosity_MAX);
+#endif
 }
 #endif// CG_LABS_FUNCTIONS_HPP

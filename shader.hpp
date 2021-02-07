@@ -21,7 +21,7 @@ class Shader {
 	std::string vertexShader{};  ///< @brief program for vertex shader
 	std::string fragmentShader{};///< @brief program for fragment shader
   };
-#if defined(__APPLE__)
+#if not defined(__WIN32__)
   std::chrono::time_point<std::filesystem::_FilesystemClock> lastWriteToFile;
 #endif
   bool bLiveReload = false;
@@ -32,15 +32,17 @@ class Shader {
    * @param _filepath path to file containing shader source code
    */
   [[maybe_unused]] explicit Shader(const std::string &_filepath, bool bEnableLiveReload = false) {
-	if(isMac()){
+#if not defined(__WIN32__)
 	lastWriteToFile = std::filesystem::last_write_time(_filepath);
-	if (bEnableLiveReload) enableLiveReload();}
+#endif
+	if (bEnableLiveReload) enableLiveReload();
 	filepath = _filepath;
 	source = parseShader();
 	rendererID = createShader();
 	LOG_S(INFO) << "Created shader with id: " << rendererID;
 
 	bind();
+
   }
   ~Shader() {
 	glCall(glDeleteProgram(rendererID));
@@ -88,14 +90,14 @@ class Shader {
   }
 
   [[maybe_unused]] void reload() {
-	if (isMac()) {
+#if not defined(__WIN32__)
 	  if (isReloadRequired()) {
 		lastWriteToFile = std::filesystem::last_write_time(filepath);
 		source = parseShader();
 		rendererID = createShader(true);
 		LOG_S(INFO) << "Reloaded shader with id: " << rendererID;
 	  }
-	}
+#endif
   }
   [[maybe_unused]] void enableLiveReload() {
 	LOG_S(INFO) << "Live reload enabled for Shader(" << this << ") ID: " << rendererID;
@@ -232,12 +234,14 @@ class Shader {
 	bLiveReload = false;
   }
   bool isReloadRequired() {
+#if not defined(__WIN32__)
 	if (bLiveReload) {
 	  if (lastWriteToFile != std::filesystem::last_write_time(filepath)) {
 		return true;
 	  }
 	}
-	return false;
+#endif
+    return false;
   }
 };
 
