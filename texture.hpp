@@ -6,7 +6,6 @@
 #define CGLABS__TEXTURE_HPP_
 
 #include <utility>
-#include "libs/stb_image.h"
 #include "functions.hpp"
 
 class Texture {

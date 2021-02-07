@@ -208,6 +208,7 @@ int main(int argc, char *argv[]) {
 	bool inPosition{false};
 	float vertVerticalSpeed{0.5};
 	unsigned int heldAttitudeFor{0};
+  double lasttime = glfwGetTime();
 	while (!app.getShouldClose()) {
 		app.getWindow()->updateFpsCounter();
 		auto currentFrame = glfwGetTime();
@@ -285,7 +286,10 @@ int main(int argc, char *argv[]) {
 		vert.setPosition({vert.position + glm::vec3(0, vertVerticalSpeed, 0)});
 		vert.setOrigin(vert.position);
 		vert.relatedMeshes[1].setOrigin(vert.position + glm::vec3(6.4, 16.77, 3.050000));
-		LOG_S(INFO) << "Vert.y: " << vert.position.y;
+      while (glfwGetTime() < lasttime + 1.0/60) {
+        // TODO: Put the thread to sleep, yield, or simply do nothing
+      }
+      lasttime += 1.0/60;
 	}
 
 	glfwTerminate();
